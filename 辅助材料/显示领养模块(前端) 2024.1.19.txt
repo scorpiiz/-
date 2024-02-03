@@ -1,0 +1,167 @@
+index.js:
+const wxcom = require('../../utils/common.js')
+
+const app=getApp()
+Page({
+  data: {
+    list: [],
+
+    isShowlogin:false,
+	isload:false,
+  },
+  //页面显示
+  onShow: function () {
+    wxcom.yzlogin();
+    this.getlist();
+
+  },
+  //获取数据
+  getlist: function () {
+     var that = this
+     let para= {f:2,cmd:'adopt_List'};
+      wxcom.loaddata(para,function(res){
+	        that.setData({
+          list: res.data.data
+		})
+	  });
+  },
+  //页面跳转
+  gonav:function(e){
+    wx.navigateTo({ url: e.currentTarget.dataset.n })
+  },
+  
+  gofav(e) {
+    const params ={};
+    params.cmd=e.currentTarget.dataset.n;
+
+    params.f=1;
+    wxcom.savedata(params,this.getlist);
+  }
+})
+
+index.wxml:
+<cu-custom bgColor="bg-t1" isBack="{{false}}">
+    <view slot="backText">返回</view>
+    <view slot="content">宠物领养</view>
+</cu-custom>
+
+<view class="padding" style="padding-bottom:100rpx;">
+    <view  wx:for="{{list}}" wx:key="id" wx:for-index="index" class="padding-lr padding-bottom radius  bg-white margin-top">
+        <view class="nitem flex bt-t1 ntiem-top" bindtap="gonav" data-n="../adopt/show?id={{item.id}}" >
+             <view class="flex pimage" wx:if="{{item.pic}}" >
+                      <image src="{{item.pic}}" style="width:300rpx;height:200rpx" mode="widthFix"></image>
+             </view>
+	     <view class="flex-sub  bt-t2" >
+		       <view class="ptbt" >{{item.pname}}</view>
+		       <view class="ptbs" >{{item.pz}}</view>
+		       <view class="ptbq">
+			   <text class="bt-jia">关注：{{item.see}}</text>  
+		       </view>
+		       <view class="ptbq">
+			   <text class="cu-tag bg-green">{{item.zt}}</text>
+		       </view>
+		       
+             </view>
+         </view>
+   </view>
+</view>
+
+
+
+
+<view class="cu-bar foot input " style="bottom:0px" >
+    <button class="cu-btn bg-blue shadow-blur"  bindtap="gonav" data-n="../index/add?t=1" >发布宠物领养</button>
+</view>
+
+<load wx:if="{{isload}}" ></load>
+
+show.js:
+const wxcom = require('../../utils/common.js')
+
+const app=getApp()
+Page({
+  data: {
+    id: 0,
+    item: {},
+    list: [],
+	list2: [],
+	cont:'',
+	ismy:false,
+	modalName:null,
+    isShowlogin:false,
+  isload:false,
+  picurl:'',
+  uid:0,
+  },
+  //页面加载
+  onLoad: function (options) {
+    wxcom.yzlogin();
+     this.setData({
+         id:options.id,picurl:app.globalData.apiurl,uid:app.globalData.logID
+     })
+    this.getlist();
+  },
+  //获取数据
+  getlist: function () {
+     var that = this
+     let para={f:3,cmd:'adopt_List',id:this.data.id};
+      wxcom.loaddata(para,function(res){
+	        that.setData({
+			  list: res.data.data2,
+			  ismy:res.data.data.uid==app.globalData.logID, 
+			  item: res.data.data
+		})
+	  });
+  },
+  //页面跳转
+  gonav:function(e){
+    wx.navigateTo({ url: e.currentTarget.dataset.n })
+  },
+  keyCInput:function(e){
+     this.setData({cont: e.detail.value})
+  },
+  gocall(e) {
+    let tel=e.currentTarget.dataset.n;
+	wxcom.call(tel);
+  },
+  goshow(e) {
+	if(app.globalData.logID>0){
+    if(app.globalData.logID==this.data.item.uid)
+    {
+      wxcom.tip("你不能申请你自己发布的领养！")
+    }
+    else{
+    this.setData({ modalName: e.currentTarget.dataset.n })
+    }
+	}else {
+		wxcom.yzlogin();
+	}
+  },
+  goping(e) {
+    let msg="";
+	if(this.data.cont) {} else { msg= '请输入领养理由';}
+    if(msg){
+	     wx.showToast({title:msg,image: '/images/pic/error.png', duration: 2000})
+		}
+	else {
+		const params ={};
+		params.cmd=e.currentTarget.dataset.n;
+		params.cid= this.data.item.id;
+		params.cname= this.data.item.pname;
+		params.pname= this.data.item.pn;
+		params.cont = this.data.cont;
+		params.f=1;
+		wxcom.savedata(params,this.getlist);
+	}
+  }, 
+  gofav(e) {
+		const params ={};
+		params.cmd=e.currentTarget.dataset.n;
+		params.id= e.currentTarget.dataset.id;
+		params.zt= e.currentTarget.dataset.f;
+		wxcom.savedata(params,this.getlist);
+  }, 
+  hideModal() {
+    this.setData({ modalName: null })
+  }
+})

@@ -1,0 +1,200 @@
+add.js:
+const wxcom = require('../../utils/common.js')
+import WxValidate from '../../utils/WxValidate.js'
+
+const app=getApp()
+Page({
+  data: {
+    isSubmit: false,
+    pic: '',
+    imgList: [],
+    isShowlogin:false,
+	isload:false,
+    nitem: {}
+  },
+  //页面加载
+  onLoad: function () {
+    this.initValidate();
+     this.getlist();
+  },
+  //获取数据
+  getlist: function () {
+    var that = this
+      wxcom.loaddata({f:1,cmd:'user_List'},function(res){
+         that.setData({ nitem:res.data.data })
+    });
+  },
+  //图片上传
+  ChooseImage() {
+    wx.chooseImage({
+      count: 5, //默认9
+      sizeType: ['original', 'compressed'], //可以指定是原图还是压缩图，默认二者都有
+      sourceType: ['album','camera'], //从相册选择
+      success: (res) => {
+		wxcom.updata(res.tempFilePaths[0],0,this.data.pic,this,this.bindpic);
+      }
+    });
+  },
+ //上传后显示图片
+ bindpic:function(t,dtime,resdata){
+	 var that = this
+	 if(t==1){ //console.log(resdata);
+		that.setData({imgList: resdata.data,pic: resdata.msg})
+	 }
+	 else {
+		wx.showModal({title: '操作提示',content: resdata.msg,showCancel:false });   
+	 }
+ },
+ //查看图片
+ ViewImage(e) {
+    wx.previewImage({
+      urls: this.data.imgList,
+      current: e.currentTarget.dataset.url
+    });
+  },
+  //删除图片
+  DelImg(e) {
+    wx.showModal({
+      title: '图片删除',
+      content: '确定要删除吗？',
+      cancelText: '取消',
+      confirmText: '确定',
+      success: res => {
+        if (res.confirm) {
+          //this.data.imgList.splice(e.currentTarget.dataset.index, 1);
+        let param= {};
+        param.cmd="file_Del";
+        param.delpic = e.currentTarget.dataset.pic;
+        param.pic = this.data.pic;
+        wxcom.loaddata(param,this.binddelpic);
+        }
+      }
+    })
+  },
+ //删除后绑定数据
+ binddelpic:function(res){
+	var that = this
+	that.setData({imgList: res.data.data,pic: res.data.msg})
+ },
+  //表单提交
+  formSubmit(e)
+  {
+    
+    if(this.data.isSubmit){
+      return false;
+    }
+    this.setData({ isSubmit: true })
+    const params = e.detail.value
+    //console.log(params)
+    if (!this.WxValidate.checkForm(params)) {
+      const error = this.WxValidate.errorList[0]
+      wx.showToast({
+        title: `${error.msg} `,
+        image: '/images/pic/error.png',
+        duration: 2000
+      })
+      this.setData({ isSubmit: false })
+      return false
+    }
+    params.pic= this.data.pic;
+
+    params.cmd='help_Add';
+
+    wxcom.savedata(params,this.gourl);
+    this.setData({ isSubmit: false })
+  },
+  //页面跳转
+  gourl(){
+    wx.switchTab({ url: 'index'});
+  },
+initValidate() {
+    // 验证字段的规则
+    const rules = {
+     pname: {
+        required: true,
+      },
+     man: {
+        required: true,
+      },
+     tel: {
+        required: true,
+      },
+     cont: {
+        required: true,
+      }
+    }
+    // 验证字段的提示信息，若不传则调用默认的信息
+    const messages = {
+     pname: {
+        required: '请输入活动主题',
+      },
+     man: {
+        required: '请输入发布人',
+      },
+     tel: {
+        required: '请输入电话',
+      },
+     cont: {
+        required: '请输入活动内容',
+      }
+    }
+    // 创建实例对象
+    this.WxValidate = new WxValidate(rules, messages)
+}
+})
+
+add.wxml:
+<cu-custom bgColor="bg-t1" isBack="{{true}}">
+    <view slot="backText">返回</view>
+    <view slot="content">发布活动</view>
+</cu-custom>
+
+    <view class="news-item-container">
+       <form bindsubmit="formSubmit">
+    <view class="cu-form-group">
+            <view class="title">活动主题：</view>
+            <input placeholder="请输入活动主题" name="pname"  ></input>
+    </view>
+<view class="cu-bar bg-white margin-top">
+     <view class="action">
+       图片上传
+     </view>
+     <view class="action">
+     </view>
+   </view>
+   <view class="cu-form-group">
+     <view class="grid col-4 grid-square flex-sub">
+       <view class="bg-img" wx:for="{{imgList}}" wx:key="{{index}}" bindtap="ViewImage" data-url="{{item.url}}">
+         <image src='{{item.url}}' mode='aspectFill'></image>
+         <view class="cu-tag bg-red" catchtap="DelImg" data-index="{{index}}" data-id="{{item.id}}" data-pic="{{item.pic}}">
+           <text class="cuIcon-close"></text>
+         </view>
+       </view>
+       <view class="solids" bindtap="ChooseImage" wx:if="{{imgList.length<1}}">
+         <text class="cuIcon-cameraadd"></text>
+       </view>
+     </view>
+</view>
+    <view class="cu-form-group">
+            <view class="title">发布人：</view>
+            <input placeholder="请输入发布人" name="man"  value="{{nitem.man}}" ></input>
+    </view>
+    <view class="cu-form-group">
+            <view class="title">电话：</view>
+            <input placeholder="请输入电话" name="tel"   value="{{nitem.tel}}"></input>
+    </view>
+    <view class="cu-form-group">
+            <view class="title">活动内容：</view>
+            <textarea placeholder="请输入活动内容" name="cont"  ></textarea>
+    </view>
+
+
+			<view class="cu-form-group">
+			  <view class="btndiv">
+				<button class="cu-btn block bg-green shadow lg"  form-type="submit" loading="{{isSubmit}}">{{isSubmit?"提交中":"确定"}}</button>
+			   </view> 
+			</view>
+	    </form>
+    </view>
+
+<load wx:if="{{isload}}" ></load>
