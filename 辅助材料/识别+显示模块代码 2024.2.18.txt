@@ -1,0 +1,394 @@
+add.wxml:
+<cu-custom bgColor="bg-t1" isBack="{{true}}">
+    <view slot="backText">返回</view>
+    <view slot="content">{{bt}}</view>
+</cu-custom>
+
+
+<view class="cu-bar search bg-white">
+	<button class="cu-btn bg-green shadow-blur round"  bindtap="gopic"
+        style="width:500rpx">拍照或上传图片</button>
+</view>
+
+    <view class="news-item-container">
+
+<view class="bg-white padding" wx:if="{{pic}}">
+         <view class="image" >
+               <image src="{{pic}}" mode="widthFix"></image>
+          </view>
+</view> 
+
+<view class="padding flex text-left text-grey bg-white bt-b2 ">
+        <view class="text-xl text-black text-bold">
+            {{item.name}}
+        </view>
+        <view class="text-xl text-green text-bold" >
+            {{item.engName}}
+        </view>
+
+</view>
+
+    
+<view class="padding">
+    <view  class="padding-lr padding-bottom radius  bg-white margin-top">
+
+<view class="nitem flex ntiem-top" >
+		 <view class="flex-sub" >性格特点：</view>
+		 <view class="flex-sub" >{{item.characters}}</view>
+	</view>
+<view class="nitem flex ntiem-top" >
+		 <view class="flex-sub" >祖籍：</view>
+		 <view class="flex-sub" >{{item.nation}}</view>
+	</view>
+
+   <view class="nitem flex ntiem-top" >
+		 <view class="flex-sub" >寿命：</view>
+		 <view class="flex-sub" >{{item.life}}</view>
+	</view>
+	<view class="nitem flex ntiem-top" >
+		 <view class="flex-sub" >价格：</view>
+		 <view class="flex-sub" >{{item.price}}</view>
+	</view>
+
+	
+
+    </view>
+  </view>
+
+  <view class="cu-bar bg-white solid-bottom margin-top">
+    <view class='action'>
+        <text class='cuIcon-titles text-blue '></text> 描述：
+    </view>
+    
+</view>
+ <view class="padding bg-white"  >
+        <view class="content bg-white padding-top">
+      <view class="wzdesc">
+          <rich-text nodes="{{item.desc}}"></rich-text>
+      </view>
+    </view>
+ </view>   
+	<view class="cu-bar bg-white solid-bottom margin-top">
+    <view class='action'>
+        <text class='cuIcon-titles text-blue '></text> 体态特征
+    </view>
+    
+</view>
+ <view class="padding bg-white"  >
+        <view class="content bg-white padding-top">
+      <view class="wzdesc">
+          <rich-text nodes="{{item.feature}}"></rich-text>
+      </view>
+    </view>
+ </view>   
+
+ 	<view class="cu-bar bg-white solid-bottom margin-top">
+    <view class='action'>
+        <text class='cuIcon-titles text-blue '></text> 特点
+    </view>
+    
+</view>
+ <view class="padding bg-white" >
+        <view class="content bg-white padding-top">
+      <view class="wzdesc">
+          <rich-text nodes="{{item.characterFeature}}"></rich-text>
+      </view>
+    </view>
+ </view>   
+
+ 	<view class="cu-bar bg-white solid-bottom margin-top">
+    <view class='action'>
+        <text class='cuIcon-titles text-blue '></text> 照顾须知
+    </view>
+    
+</view>
+ <view class="padding bg-white"  style="padding-bottom:100rpx;">
+        <view class="content bg-white padding-top">
+      <view class="wzdesc">
+          <rich-text nodes="{{item.careKnowledge}}"></rich-text>
+      </view>
+    </view>
+ </view>   
+
+
+
+    </view>
+<view class="cu-bar foot input " style="bottom:0px" wx:if="{{t==1}}">
+    <button class="cu-btn bg-blue shadow-blur"  bindtap="gofav" data-n="../adopt/add" >发布领养</button>
+</view>
+
+<load wx:if="{{isload}}" ></load>
+
+//index.js
+const wxcom = require('../../utils/common.js')
+import WxValidate from '../../utils/WxValidate.js'
+const util = require('../../utils/util.js')
+const app=getApp()
+Page({
+  data: {
+    isShowlogin:false,
+    isload:false,
+    isnologin:true,
+    isSubmit:false,
+    sf:'用户',
+    key:'',
+    nitem:{},
+	list:[],
+	list2:[],
+	list3:[],
+	list5:[]
+  },
+  onLoad: function () {
+   this.initValidate();
+   this.setData({ isnologin:app.globalData.logID==0 })
+  },
+  onShow: function () {
+    this.showlogin();
+	this.getlist();
+  },
+  getlist: function () {
+    var that = this
+	wxcom.loaddata({f:1,cmd:'adopt_List'},function(res){
+		  that.setData({
+                 list: res.data.data,
+				 list2: res.data.data2,
+				 list3: res.data.data3,
+				 list5: res.data.data5
+		   })
+  })},
+  keyInput:function(e){
+     this.setData({key: e.detail.value})
+  },
+  gosou:function(){
+     this.getlist();
+  },
+  showlogin:function (){
+    var that = this
+      that.setData({
+        isShowlogin:app.globalData.isLog==0,
+	    isnologin:app.globalData.logID==0
+        })
+  },
+ gonav:function(e)
+  {
+    let url=e.currentTarget.dataset.n;
+    wx.navigateTo({
+      url: url
+    })
+  },
+ gotav:function(e)
+  {
+    let url=e.currentTarget.dataset.n;
+    wx.switchTab({
+      url: url
+    })
+  },
+  gofav(e) {
+    const params ={};
+    params.cmd=e.currentTarget.dataset.n;
+    params.zt=e.currentTarget.dataset.f;
+    params.id=e.currentTarget.dataset.id;
+    wxcom.savedata(params,this.getlist);
+  },
+  formSubmit(e)
+  {
+    if(this.data.isSubmit)
+    {
+      return false;
+    }
+    this.setData({ isSubmit: true })
+
+    const params = e.detail.value
+    console.log(params)
+    if (!this.WxValidate.checkForm(params)) {
+      const error = this.WxValidate.errorList[0]
+      // `${error.param} : ${error.msg} `
+      wx.showToast({
+        title: `${error.msg} `,
+        image: '/images/pic/error.png',
+        //icon: 'warn',  // 
+        duration: 2000
+      })
+      this.setData({ isSubmit: false })
+      return false
+    }
+    params.cmd='user_Login';
+    params.f=1;
+    var that = this
+    wxcom.savedata(params,that.showlogin);
+    that.setData({ isSubmit: false })
+  },
+  initValidate() {
+    // 验证字段的规则
+    const rules = {
+      uname: {
+        required: true,
+      },
+      upass: {
+            required: true,
+        },
+    }
+
+    // 验证字段的提示信息，若不传则调用默认的信息
+    const messages = {
+      uname: {
+            required: '请输入用户名',
+        },
+        upass: {
+            required: '请输入密码',
+        },
+    }
+
+    // 创建实例对象
+    this.WxValidate = new WxValidate(rules, messages)
+    /*
+    // 自定义验证规则
+    this.WxValidate.addMethod('assistance', (value, param) => {
+        return this.WxValidate.optional(value) || (value.length >= 1 && value.length <= 2)
+    }, '请勾选1-2个敲码助手')
+    */
+}
+})
+
+<!--index.wxml-->
+<cu-custom bgColor="bg-t1" isBack="{{false}}">
+    <view slot="backText">返回</view>
+    <view slot="content">宠物救助服务平台</view>
+</cu-custom>
+
+
+<view class="container">
+    <swiper class="screen-swiper round-dot" indicator-dots="true" circular="true" autoplay="true" interval="5000" duration="500">
+        <swiper-item wx:for="{{list2}}" wx:key="id" wx:for-index="index" >
+            <image src="{{item.pic}}" mode="aspectFill"></image>
+        </swiper-item>
+    </swiper>
+</view>
+
+
+<view class="cu-bar bg-white solid-bottom margin-top" wx:if="{{isnologin}}">
+    <view class='action'>
+        <text class='cuIcon-titles text-blue '></text> 用户登录
+    </view>
+</view>
+
+
+<view class="news-item-container"  wx:if="{{isnologin}}">
+       <form bindsubmit="formSubmit">
+           <view class="cu-form-group margin-top">
+               <view class="title">用户名：</view>
+               <input placeholder="请输入用户名" name="uname" ></input>
+           </view>
+           <view class="cu-form-group ">
+               <view class="title">密码：</view>
+               <input placeholder="请输入密码" name="upass" password="true" ></input>
+           </view>
+
+        <view class="cu-form-group">
+        <view class="btndiv">
+          <button style="width:250rpx" class="cu-btn block bg-blue shadow lg"  form-type="submit" loading="{{isSubmit}}">{{isSubmit?"提交中":"确定"}}</button>
+         </view>
+          <view class="btndiv">
+            <navigator style="width:250rpx" class="cu-btn block bg-green shadow lg" url="reg">用户注册</navigator>
+          </view>
+        </view>
+        </form>
+    </view>
+
+
+<view wx:if="{{isnologin==false}}" 
+    class="cu-bar bg-gradual-red  padding radius text-center shadow-blur margin-top"  
+	bindtap="gonav" data-n="../index/add?t=0" >
+  宠物识别
+</view>
+
+
+<view class="cu-bar bg-white solid-bottom margin-top" >
+    <view class='action'>
+        <text class='cuIcon-titles text-orange '></text> 最新宠物领养
+    </view>
+     <view class='action'>
+	<view  bindtap="gotav" data-n="../adopt/index" class='cuIcon-right'></view>
+    </view>
+</view>
+
+<view class="padding" >
+    <view  wx:for="{{list}}" wx:key="id" wx:for-index="index" class="padding-lr padding-bottom radius  bg-white margin-top">
+        <view class="nitem flex bt-t1 ntiem-top" bindtap="gonav" data-n="../adopt/show?id={{item.id}}" >
+             <view class="flex pimage" wx:if="{{item.pic}}" >
+                      <image src="{{item.pic}}" style="width:300rpx;height:200rpx" mode="widthFix"></image>
+             </view>
+	     <view class="flex-sub  bt-t2" >
+		       <view class="ptbt" >{{item.pname}}</view>
+		       <view class="ptbs" >{{item.pn}}</view>
+		       <view class="ptbq">
+			   <text class="cu-tag bg-green">{{item.zt}}</text>
+		       </view>
+		       
+             </view>
+         </view>
+   </view>
+</view>
+
+<view class="cu-bar bg-white solid-bottom margin-top" >
+    <view class='action'>
+        <text class='cuIcon-titles text-orange '></text> 最新宠物寻回
+    </view>
+     <view class='action'>
+	<view  bindtap="gonav" data-n="../petlost/index" class='cuIcon-right'></view>
+    </view>
+</view>
+
+<view class="padding" >
+    <view  wx:for="{{list3}}" wx:key="id" wx:for-index="index" class="padding-lr padding-bottom radius  bg-white margin-top">
+        <view class="nitem flex bt-t1 ntiem-top" bindtap="gonav" data-n="../petlost/show?id={{item.id}}" >
+             <view class="flex pimage" wx:if="{{item.pic}}" >
+                      <image src="{{item.pic}}" style="width:300rpx;height:200rpx" mode="widthFix"></image>
+             </view>
+	     <view class="flex-sub  bt-t2" >
+		       <view class="ptbt" >{{item.pname}}</view>
+		       <view class="ptbq">
+			   <text class="bt-jia" wx-if="{{item.fee>0}}">报酬：{{item.fee}}元</text>
+			   <text class="bt-jia" wx-if="{{item.fee==0}}">无偿</text>  
+		       </view>
+		       <view class="ptbq">
+			   <text class="cu-tag bg-green">{{item.zt}}</text>
+		       </view>
+		       
+             </view>
+         </view>
+   </view>
+</view>
+
+<view class="cu-bar bg-white solid-bottom margin-top" >
+    <view class='action'>
+        <text class='cuIcon-titles text-orange '></text> 最新活动
+    </view>
+     <view class='action'>
+	<view  bindtap="gotav" data-n="../help/index" class='cuIcon-right'></view>
+    </view>
+</view>
+
+<view class="padding" >
+    <view  wx:for="{{list5}}" wx:key="id" wx:for-index="index" class="padding-lr padding-bottom radius  bg-white margin-top">
+        <view class="nitem flex bt-t1 ntiem-top" bindtap="gonav" data-n="../help/show?id={{item.id}}" >
+             <view class="flex pimage" wx:if="{{item.pic}}" >
+                      <image src="{{item.pic}}" style="width:300rpx;height:200rpx" mode="widthFix"></image>
+             </view>
+	     <view class="flex-sub  bt-t2" >
+		       <view class="ptbt" >{{item.pname}}</view>
+		       <view class="ptbs" ></view>
+			   <view class="ptbq">
+			   <text class="bt-jia">关注：{{item.see}}</text>  
+		       </view>
+		       <view class="ptbq">
+			   <text class="cu-tag bg-green">{{item.zt}}</text>
+		       </view>
+		       
+             </view>
+         </view>
+   </view>
+</view>
+
+
+<load wx:if="{{isload}}" ></load>

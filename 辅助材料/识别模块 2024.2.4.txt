@@ -1,0 +1,112 @@
+add.js:
+const wxcom = require('../../utils/common.js')
+import WxValidate from '../../utils/WxValidate.js'
+
+const app=getApp()
+Page({
+  data: {
+    isSubmit: false,
+    pic: '',
+    imgList: [],
+	item:{},
+	t:0,
+    bt:'宠物识别',
+    isShowlogin:false,
+	isload:false,
+  },
+  //页面加载
+  onLoad: function (options) {
+    
+     this.setData({t:options.t,bt:options.t==0?"宠物识别":"发布宠物领养"})
+     //this.getlist();
+
+  },
+  //页面跳转
+  gofav(e){
+     if(this.data.item && this.data.item.name){
+	    app.globalData.pz=this.data.item.name;
+	    wxcom.nav("../adopt/add");
+	 }
+	 else {
+	   wxcom.tip("请先识别宠物")
+	 }
+  },
+gopic: function (e) {
+     var that = this
+        wx.chooseImage({
+                count: 1, // 默认9
+                sizeType: ['compressed'], // 可以指定是原图还是压缩图，默认二者都有
+                sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
+                success: function (ress) {
+                    console.log(ress)
+                    if (ress.size > 1024 * 1024 * 2) {
+                        wx.showModal({
+                            title: '宠物识别',
+                            content: '很抱歉，图片最大允许2M，当前为' + (ress.size / (1024 * 1024)).toFixed(2),
+                        })
+                        return false;
+                    }else{
+                        wx.getFileSystemManager().readFile({
+                            filePath: ress.tempFilePaths[0], //选择图片返回的相对路径
+                            encoding: 'base64', //编码格式
+                            success: res => { //成功的回调
+                                // console.log('data:image/png;base64,' + res.data)
+                                app.globalData.pic=ress.tempFilePaths[0];
+                that.setData({pic:app.globalData.pic});
+                
+                let resdata={trust:86,pettype:1,name:"阿拉斯加雪橇犬",engName:"Alaskan Malamute",characters:"非常聪明友好、喜欢吠叫",nation:"美国",easyOfDisease:"肠胃疾病",life:"12年~15年",price:"3000起",desc:"　　阿拉斯加雪橇犬（Alaskan Malamute），又称阿拉斯加马拉穆，是最古老的雪橇犬之一，原产于美国，AKC分类属工作犬组。因它的四肢发达，体格健壮，培育它的目的是为了耐力而不是速度，因而它们的主要用途是拉雪橇。作为宠物，阿拉斯加雪橇犬一旦成熟后有着非常安静、高雅的气质，而且它们忠于主人。",feature:"　　阿拉斯加体型较大，毛发蓬松，外型俊朗优美，有狼一样冷峻的外表，但是内心却非常友善，常被人们跟哈士奇混幺，他的体型比哈士奇大点，毛发也比哈士奇长。",characterFeature:"　　随着社会的不断发展，阿拉斯加雪橇犬受到很多年轻人的喜爱，阿拉斯加早年是当做工作犬来使用的，现已进入很多家庭，之后会渐渐的习惯家庭饲养，服从家里其他人的指挥命令。",careKnowledge:"　　随着社会的发展，养宠也成了一种时尚。因阿拉斯加具有很强的语言能力，以及英俊的外表，又能够领会人的语言、表情和各类手势，因此饲养的人越来越多。由于阿拉斯加的肠胃天生就不好，因此在生活上及饮食上主人应需要多加留意。"}
+                ;
+
+                                      //wx.setStorageSync("pic2",newSource);
+                                      that.setData({item:resdata});
+                                      return;
+
+                                wx.request({
+                                    url:  'https://apis.tianapi.com/scanpet/index', //垃圾分类接口
+                                    method: 'POST',
+                                    header: {
+                                        'content-type': 'application/x-www-form-urlencoded'
+                                    },
+                                    data: {
+                                        key: "c6e2bbda7550c3bcd56373117816c373",
+                                        img: 'data:image/png;base64,' + res.data
+                                    },
+                                    success: function (res) {
+                                        if (res.data.code == 200) {
+
+
+                                            let data={};
+											if(res.data.result.list){
+											  data=res.data.result.list[0];
+											}
+                                            //wx.setStorageSync("pic2",newSource);
+                                            that.setData({item:data});
+                                            
+                                        } else {
+                                            console.error('错误码：' + res.data.code + '\n错误提示：' + res.data.msg + '\n接口详情：https://www.tianapi.com/apiview/163')
+                                            wx.showModal({
+                                                title: '宠物识别',
+                                                content: res.data.msg,
+                                                showCancel: false,
+                                                success: function (res) {
+                                                    if (res.confirm) {
+                                                        console.log('用户点击确定')
+                                                    }
+                                                }
+                                            })
+                                            that.setData({
+                                                hideScroll: true,
+                                                bindSource: []
+                                            })
+                                        }
+                                    }
+                                })
+                            }
+                        })
+                    }
+                }
+            }
+        )
+  }
+
+})
