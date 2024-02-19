@@ -1,0 +1,283 @@
+reg.js:
+const wxcom = require('../../utils/common.js')
+import WxValidate from '../../utils/WxValidate.js'
+const app = getApp()
+
+Page({
+  data: {
+    isShowlogin:false,
+    isload:false,
+    isSubmit:false,
+	gender:'男',
+    cindex:-1,
+    fid:0,
+	fname:'',
+	isshowtag: false,
+    pic:'',
+    imgList: [],
+    list:[]
+  },
+  onLoad: function () {
+    var that = this
+    //wxcom.loaddata(that.data.para,that.binddata);
+    that.initValidate();
+    //wxcom.getislogin(null,that.showlogin);
+  },
+  getlist: function () {
+    
+  },
+  tipdata:function(res)
+  {
+      let msg=res.data.code==0?"成功了":res.data.msg
+      console.log(res)
+     wx.showModal({
+        title: '操作提示',
+        content: msg,
+        showCancel:false,
+        success (rres) {
+    if (rres.confirm) {
+        if(res.data.code==0)
+        {
+          console.log('用户点击确定')
+           wx.switchTab({ url: 'index'});
+          }
+    } 
+
+      }
+       })
+      this.setData({ isSubmit: false })
+      this.setData({ submitHidden: true })
+ 
+},
+ radioChange: function (e) {
+	 let checkValue = e.detail.value;
+	 this.setData({gender: checkValue});
+ },
+ goshow(e) {
+	this.setData({ isshowtag: true })
+  },
+ gotag(e) {
+    let fname=e.currentTarget.dataset.n;
+	let fid=e.currentTarget.dataset.id;
+	this.setData({ fid:fid,fname:fname,isshowtag: false })
+  },
+ binddelpic:function(res)
+ {
+	 var that = this
+	 console.log(res.data);
+	 that.setData({
+	 imgList: res.data.data,
+	 pic: res.data.msg
+	 })
+ },
+ bindpic:function(t,dtime,resdata)
+ {
+	 var that = this
+	console.log(t);
+	 if(t==1)
+	 {
+		 console.log(resdata);
+		 that.setData({
+		 imgList: resdata.data,
+		 pic: resdata.msg
+	     })
+      }
+      else 
+      {
+       wx.showModal({title: '操作提示',content: resdata.msg,showCancel:false });   
+      }
+ },
+  ChooseImage() {
+    wx.chooseImage({
+      count: 5, //默认9
+      sizeType: ['original', 'compressed'], //可以指定是原图还是压缩图，默认二者都有
+      sourceType: ['album','camera'], //从相册选择
+      success: (res) => {
+      
+      wxcom.updata(res.tempFilePaths[0],0,this.data.pic,this,this.bindpic);
+        
+      }
+    });
+  },
+  ViewImage(e) {
+    wx.previewImage({
+      urls: this.data.imgList,
+      current: e.currentTarget.dataset.url
+    });
+  },
+  DelImg(e) {
+    wx.showModal({
+      title: '图片删除',
+      content: '确定要删除吗？',
+      cancelText: '取消',
+      confirmText: '确定',
+      success: res => {
+        if (res.confirm) {
+          //this.data.imgList.splice(e.currentTarget.dataset.index, 1);
+        let param= {};
+        param.cmd="file_Del";
+        param.delpic = e.currentTarget.dataset.pic;
+        param.pic = this.data.pic;
+        wxcom.loaddata(param,this.binddelpic);
+        }
+      }
+    })
+  },
+  formSubmit(e)
+  {
+    if(this.data.isSubmit)
+    {
+      return false;
+    }
+    this.setData({ isSubmit: true })
+
+    const params = e.detail.value
+    console.log(params)
+    if (!this.WxValidate.checkForm(params)) {
+      const error = this.WxValidate.errorList[0]
+      // `${error.param} : ${error.msg} `
+      wx.showToast({
+        title: `${error.msg} `,
+        image: '/images/pic/error.png',
+        //icon: 'warn',  // 
+        duration: 2000
+      })
+      this.setData({ isSubmit: false })
+      return false
+    }
+    this.setData({ submitHidden: false })
+    params.cmd='user_Add';
+	params.f='1';
+	params.pic=this.data.pic;
+
+	//params.cid=this.data.fid;
+	//params.cname=this.data.fname;
+    //params.gender=this.data.gender;
+    //params.wxName=app.globalData.userInfo.nickName;
+    //params.pic=app.globalData.userInfo.avatarUrl;
+    //params.userSex=app.globalData.userInfo.gender;
+	
+    wxcom.loaddata(params,this.tipdata);
+  },
+  initValidate() {
+    // 验证字段的规则
+    const rules = {
+     uname: {
+        required: true,
+      },
+      upass: {
+            required: true,
+        },
+      man: {
+        required: true,
+      }
+      
+    }
+
+    // 验证字段的提示信息，若不传则调用默认的信息
+    const messages = {
+    uname: {
+            required: '请输入用户名',
+        },
+        upass: {
+            required: '请输入密码',
+        },
+      man: {
+            required: '请输入姓名',
+        }
+       
+
+    }
+
+    // 创建实例对象
+    this.WxValidate = new WxValidate(rules, messages)
+    /*
+    // 自定义验证规则
+    this.WxValidate.addMethod('assistance', (value, param) => {
+        return this.WxValidate.optional(value) || (value.length >= 1 && value.length <= 2)
+    }, '请勾选1-2个敲码助手')
+    */
+}
+})
+
+reg.wxml:
+<view class="container">
+  <cu-custom bgColor="bg-t1" isBack="{{true}}">
+        <view slot="backText">返回</view>
+        <view slot="content">用户注册</view>
+    </cu-custom>
+   
+
+
+    <view class="news-item-container">
+       <form bindsubmit="formSubmit">
+
+         <view class="cu-form-group margin-top">
+           <view class="title">用户名：</view>
+           <input placeholder="请输入用户名" name="uname" ></input>
+         </view>
+         <view class="cu-form-group ">
+           <view class="title">密码：</view>
+           <input placeholder="请输入密码" name="upass" password="true" ></input>
+         </view>
+           <view class="cu-form-group ">
+               <view class="title">姓名：</view>
+               <input placeholder="请输入姓名" name="man"></input>
+           </view>
+        <view class="cu-form-group">
+            <view class="title">联系电话：</view>
+            <input placeholder="请输入联系电话"  type="number" name="tel" ></input>
+            <view class="cu-capsule radius">
+                <view class="cu-tag bg-orange">
+                    +86
+                </view>
+                <view class="cu-tag line-orange">
+                    中国大陆
+                </view>
+            </view>
+        </view>
+	
+
+<view class="cu-bar bg-white margin-top">
+     <view class="action">
+       图片上传
+     </view>
+     <view class="action">
+     </view>
+   </view>
+   <view class="cu-form-group">
+     <view class="grid col-4 grid-square flex-sub">
+       <view class="bg-img" wx:for="{{imgList}}" wx:key="{{index}}" bindtap="ViewImage" data-url="{{item.url}}">
+         <image src='{{item.url}}' mode='aspectFill'></image>
+         <view class="cu-tag bg-red" catchtap="DelImg" data-index="{{index}}" data-id="{{item.id}}" data-pic="{{item.pic}}">
+           <text class="cuIcon-close"></text>
+         </view>
+       </view>
+       <view class="solids" bindtap="ChooseImage" wx:if="{{imgList.length<1}}">
+         <text class="cuIcon-cameraadd"></text>
+       </view>
+     </view>
+   </view>
+
+
+		 
+           <view class="cu-form-group">
+               <view class="title">地址：</view>
+               <input placeholder="请输入地址" name="address" ></input>
+           </view>
+        <view class="cu-form-group">
+        <view class="btndiv">
+          <button class="cu-btn block bg-blue shadow lg"  form-type="submit" loading="{{isSubmit}}">{{isSubmit?"提交中":"保存"}}</button>
+         </view> 
+        </view>
+        </form>
+    </view>
+
+
+</view>  
+
+
+
+
+<login wx:if="{{isShowlogin}}"  bind:run="getuser"></login>
+<load wx:if="{{isload}}" ></load>
