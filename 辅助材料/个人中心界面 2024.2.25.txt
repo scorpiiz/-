@@ -1,0 +1,146 @@
+//index.js
+//获取应用实例
+const wxcom = require('../../utils/common.js')
+const app=getApp()
+Page({
+  data: {
+    isShowlogin:false,
+    isload:false,
+      item: {
+        pic:'../../images/pic/avatar.png',
+        man:'姓名',
+        tel:''
+      }
+  },
+  onLoad: function () {
+    
+  },
+  onShow: function () {
+	    wxcom.yzlogin();
+    this.getlist();
+  },
+  getlist: function (){
+	  var that = this
+	  wxcom.loaddata({f:1,cmd:'user_List'},function(res){
+		  that.setData({item: res.data.data})
+	  });
+  },
+  gonav:function(e)
+  {
+    let url=e.currentTarget.dataset.n;
+    wx.navigateTo({url: url})
+  },
+  gofav:function(e)
+  {
+   app.globalData.isLog=0;
+   app.globalData.stype=0;
+   app.globalData.logID=0;
+     wx.switchTab({
+      url: "../index/index"
+    })
+  }
+
+})
+
+{
+  "navigationBarBackgroundColor": "#0081ff",
+  "navigationBarTextStyle": "white",
+  "navigationBarTitleText": "个人中心"
+}
+
+<!--index.wxml-->
+<view class="container">
+  <cu-custom bgColor="bg-t2" isBack="{{false}}">
+        <view slot="content">个人中心</view>
+  </cu-custom>
+  <view class="userinfo padding-top padding-bottom">
+    <image  class="userinfo-avatar" src="{{item.pic}}" mode="cover"></image>
+      <text class="userinfo-nickname">{{item.man}}</text>
+      <text class="userinfo-nickname">{{item.tel}}</text>
+      <view class="padding-xs"></view>
+  </view>
+</view>
+
+<view class="cu-list menu card-menu margin-top-xl margin-bottom-xl shadow-lg radius">
+    
+
+    <view class="cu-item arrow" bindtap="gonav" data-n="userinfo">
+        <text class="text-grey">个人信息</text>
+    </view>
+
+
+    <view class="cu-item arrow" bindtap="gonav" data-n="../myadopt/index">
+        <text class="text-grey">我的宠物领养</text>
+    </view>
+
+    <view class="cu-item arrow" bindtap="gonav" data-n="../myapply/index">
+        <text class="text-grey">我的申请记录</text>
+    </view>
+
+    <view class="cu-item arrow" bindtap="gonav" data-n="../mypetlost/index">
+        <text class="text-grey">我的宠物寻回</text>
+    </view>
+
+    <view class="cu-item arrow" bindtap="gonav" data-n="../mypetfind/index">
+        <text class="text-grey">我的寻回记录</text>
+    </view>
+
+    <view class="cu-item arrow" bindtap="gonav" data-n="../myhelp/index">
+        <text class="text-grey">我的活动</text>
+    </view>
+
+    <view class="cu-item arrow" bindtap="gonav" data-n="../mybaoming/index">
+        <text class="text-grey">我的活动报名</text>
+    </view>
+
+    <view class="cu-item arrow" bindtap="gonav" data-n="../myrecord/index">
+        <text class="text-grey">我的活动打卡</text>
+    </view>
+
+    <view class="cu-item arrow" bindtap="gonav" data-n="../mypet/index">
+        <text class="text-grey">我的宠物</text>
+    </view>
+
+    <view class="cu-item arrow" bindtap="gonav" data-n="../mysms/index">
+        <text class="text-grey">我的消息通知</text>
+    </view>
+
+    <view class="cu-item arrow" bindtap="gonav" data-n="../myfav/index">
+        <text class="text-grey">我的关注</text>
+    </view>
+
+
+   <view class="cu-item arrow" bindtap="gonav" data-n="userpass">
+        <text class="text-grey">修改密码</text>
+    </view>
+
+    <view class="cu-item arrow" bindtap="gofav" data-n="userout">
+        <text class="text-grey">退出登录</text>
+    </view>
+
+</view> 
+
+
+<login wx:if="{{isShowlogin}}"  bind:run="getuser"></login>
+<load wx:if="{{isload}}" ></load>
+/**index.wxss**/
+.userinfo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.userinfo-avatar {
+  width: 128rpx;
+  height: 128rpx;
+  margin: 20rpx;
+  border-radius: 50%;
+}
+
+.ccuserinfo-nickname {
+  color: #aaa;
+}
+
+.usermotto {
+  margin-top: 200px;
+}
