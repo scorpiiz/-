@@ -1,0 +1,36 @@
+<!--index.wxml-->
+<view class="container">
+    <cu-custom bgColor="bg-t1" isBack="{{true}}">
+        <view slot="backText">返回</view>
+        <view slot="content">修改密码</view>
+    </cu-custom>
+    <view class="topinfo">
+        <text class="topbt">用户密码</text>
+    </view>
+    <view class="news-item-container">
+       <form bindsubmit="formSubmit">
+        <view class="cu-form-group margin-top">
+            <view class="title">原始密码：</view>
+             <input placeholder="请输入原始密码" name="upass1" password="true" ></input>
+        </view>
+           <view class="cu-form-group">
+               <view class="title">新密码：</view>
+               <input placeholder="请输入新密码" name="upass" password="true"  ></input>
+           </view>
+        <view class="cu-form-group">
+            <view class="title">确认密码：</view>
+            <input placeholder="请输入确认密码" name="confirmuserpass" password="true" ></input>
+        </view>
+        <view class="cu-form-group">
+        <view class="btndiv">
+          <button class="cu-btn block bg-blue shadow lg"  form-type="submit" loading="{{isSubmit}}">{{isSubmit?"提交中":"保存"}}</button>
+         </view> 
+        </view>
+        </form>
+    </view>
+
+
+</view>   
+
+<login wx:if="{{isShowlogin}}"  bind:run="getuser"></login>
+<load wx:if="{{isload}}" ></load>
