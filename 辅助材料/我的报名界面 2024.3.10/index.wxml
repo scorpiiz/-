@@ -1,0 +1,65 @@
+<cu-custom bgColor="bg-t1" isBack="{{true}}">
+    <view slot="backText">返回</view>
+    <view slot="content">我的活动报名</view>
+</cu-custom>
+
+ <view class="padding" >
+      <view  wx:for="{{list}}" wx:key="id" wx:for-index="index" class="padding-lr padding-bottom radius  bg-white margin-top">
+		<view class="nitem flex ntiem-top" >
+		     <view class="flex-sub"   >
+			 <text class="n2 text-blue">{{item.zt}}</text>
+		     </view>
+		 </view>
+		 <view class="nitem"   bindtap="gonav" data-n="../help/show?id={{item.cid}}" >
+				<text class="nn1">活动：</text>
+				<text class="n2 text-green">{{item.cname}}</text>
+		</view>
+		
+		<view class="nitem"  >
+			<text class="nn1">报名理由：</text>
+			<text class="n2">{{item.cont}}</text>
+		</view>
+		
+		<view class="nitem" wx:if="{{item.addtime}}" >
+			<text class="nn1">报名时间：</text>
+			<text class="n2">{{item.addtime}}</text>
+		</view>
+		
+
+
+
+	       <view class="nitem" >
+		    <button class="cu-btn bg-blue shadow " wx:if="{{item.zt=='未审核' || item.zt=='已拒绝'}}" 
+		    bindtap="gofav"  style="width:200rpx"  data-n="baoming_Del"  data-f="1" data-id="{{item.id}}"  >删除</button>
+
+  <button class="cu-btn bg-blue shadow " wx:if="{{item.zt=='已通过'}}" 
+		    bindtap="goshow"  style="width:200rpx"  data-n="ping" 
+			data-f="1" data-cid="{{item.cid}}" data-cname="{{item.cname}}" >打卡</button>
+
+	       </view>
+	 
+      </view>
+</view>
+
+
+<view class="cu-modal {{modalName=='ping'?'show':''}}">
+  <view class="cu-dialog">
+    <view class="cu-bar bg-white justify-end">
+      <view class="content">活动打卡</view>
+      <view class="action" bindtap="hideModal">
+        <text class="cuIcon-close text-red"></text>
+      </view>
+    </view>
+
+   <view class="padding-xl">
+         <textarea placeholder="请输入打卡内容" class="text-left" name="cont" bindinput="keyCInput"></textarea>
+    </view>
+
+    <view class="cu-bar bg-white">
+      <button class="cu-btn line-blue text-blue" bindtap="hideModal">取消</button>
+      <button class="cu-btn bg-blue margin-left" bindtap="goping" data-n="record_Add">确定</button>
+    </view>
+  </view>
+</view>
+
+<load wx:if="{{isload}}" ></load>
