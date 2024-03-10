@@ -1,0 +1,47 @@
+<cu-custom bgColor="bg-t1" isBack="{{true}}">
+    <view slot="backText">返回</view>
+    <view slot="content">我的申请记录</view>
+</cu-custom>
+
+ <view class="padding" >
+      <view  wx:for="{{list}}" wx:key="id" wx:for-index="index" class="padding-lr padding-bottom radius  bg-white margin-top">
+		<view class="nitem flex ntiem-top" >
+		     <view class="flex-sub"   >
+			 <text class="n2 text-blue">{{item.zt}}</text>
+		     </view>
+		 </view>
+		 <view class="nitem"   bindtap="gonav" data-n="../adopt/show?id={{item.cid}}" >
+				<text class="nn1">宠物领养：</text>
+				<text class="n2 text-green">{{item.cname}}</text>
+		</view>
+		<view class="nitem"   bindtap="gonav" data-n="../adopt/show?id={{item.cid}}"  >
+			<text class="nn1">宠物名称：</text>
+			<text class="n2">{{item.pname}}</text>
+		</view>
+		
+		<view class="nitem"  >
+			<text class="nn1">申请理由：</text>
+			<text class="n2">{{item.cont}}</text>
+		</view>
+		
+
+
+		<view class="nitem" wx:if="{{item.addtime}}" >
+			<text class="nn1">申请时间：</text>
+			<text class="n2">{{item.addtime}}</text>
+		</view>
+		
+
+
+
+	       <view class="nitem" >
+		    <button class="cu-btn bg-blue shadow " wx:if="{{item.zt=='未审核' || item.zt=='已拒绝'}}" 
+		    bindtap="gofav"  style="width:200rpx"  data-n="apply_Del"  data-f="1" data-id="{{item.id}}"  >删除</button>
+
+	       </view>
+	 
+      </view>
+</view>
+
+
+<load wx:if="{{isload}}" ></load>
