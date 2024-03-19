@@ -1,0 +1,28 @@
+<cu-custom bgColor="bg-t1" isBack="{{true}}">
+    <view slot="backText">返回</view>
+    <view slot="content">我的消息通知</view>
+</cu-custom>
+
+ <view class="padding" >
+      <view  wx:for="{{list}}" wx:key="id" wx:for-index="index" 
+      class="padding-lr padding-bottom radius  bg-white margin-top"
+      >
+		<view class="nitem flex ntiem-top" >
+		     <view class="flex-sub">
+			 <text class="n2 text-blue">{{item.uname}}</text>
+		     </view>
+		 </view>
+
+         <view class="nitem" >
+			<text class="n2 text-red">{{item.cont}}</text>
+		</view>
+
+		<view class="nitem" wx:if="{{item.addtime}}" >
+			<text class="nn1">通知时间：</text>
+			<text class="n2">{{item.addtime}}</text>
+		</view>
+
+      </view>
+</view>
+
+<load wx:if="{{isload}}" ></load>

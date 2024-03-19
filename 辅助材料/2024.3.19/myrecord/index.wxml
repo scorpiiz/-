@@ -1,0 +1,31 @@
+<cu-custom bgColor="bg-t1" isBack="{{true}}">
+    <view slot="backText">返回</view>
+    <view slot="content">我的活动打卡</view>
+</cu-custom>
+
+ <view class="cu-card dynamic no-card" >
+    <view class="cu-item shadow">
+     <view class="cu-list menu-avatar comment solids-top" >
+        <view class="cu-item"  wx:for="{{list}}" wx:key="id" wx:for-index="index"  wx:for-item="citem" >
+          <view class="cu-avatar round" style="background-image:url({{citem.userpic}});"></view>
+          <view class="content">
+            <view class="text-blue">{{citem.uname}}</view>
+			 <view class="text-gray text-content text-df">
+              {{citem.cont}}
+            </view>
+	        <view class="bg-grey padding-sm radius margin-top-sm  text-sm">
+              <view class="flex">
+                <view>活动：</view>
+                <view class="flex-sub">{{citem.cname}}</view>
+              </view>
+            </view>
+            <view class="margin-top-sm flex justify-between">
+              <view class="text-gray text-df">{{citem.addtime}}</view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+<load wx:if="{{isload}}" ></load>

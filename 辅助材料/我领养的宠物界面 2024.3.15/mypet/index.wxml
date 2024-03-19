@@ -1,0 +1,28 @@
+<cu-custom bgColor="bg-t1" isBack="{{true}}">
+    <view slot="backText">返回</view>
+    <view slot="content">我领养的宠物</view>
+</cu-custom>
+
+<view class="padding" style="padding-bottom:100rpx;">
+    <view  wx:for="{{list}}" wx:key="id" wx:for-index="index" class="padding-lr padding-bottom radius  bg-white margin-top">
+        <view class="nitem flex bt-t1 ntiem-top"  >
+	     <view class="flex pimage" wx:if="{{item.pic}}" >
+                      <image src="{{item.pic}}" style="width:300rpx;height:200rpx" mode="widthFix"></image>
+             </view>
+	     <view class="flex-sub  bt-t2" >
+		       <view class="ptbt" >{{item.pname}}</view>
+		       <view class="ptjia" >关注：{{item.see}}</view>
+
+		       <view class="nitem  margin-top">
+	
+                   <button class="cu-btn bg-blue shadow " 
+		    bindtap="gonav" data-n="../adopt/show?id={{item.id}}"  style="width:200rpx" >查看</button>
+
+
+	       </view>
+             </view>
+         </view>
+   </view>
+</view>
+
+<load wx:if="{{isload}}" ></load>
