@@ -1,0 +1,24 @@
+<cu-custom bgColor="bg-t1" isBack="{{false}}">
+    <view slot="backText">返回</view>
+    <view slot="content">宠物知识</view>
+</cu-custom>
+
+<view class="padding" style="padding-bottom:100rpx;">
+    <view  wx:for="{{list}}" wx:key="id" wx:for-index="index" class="padding-lr padding-bottom radius  bg-white margin-top">
+        <view class="nitem flex bt-t1 ntiem-top" bindtap="gonav" data-n="../zixun/show?id={{item.id}}" >
+          <view class="flex psimage" wx:if="{{item.pic}}" >
+                      <image src="{{item.pic}}" style="width:150rpx;height:100rpx" mode="widthFix"></image>
+             </view>
+	     <view class="flex-sub  bt-t2" >
+		       <view class="ptbt" >{{item.bt}}</view>
+		       <view class="ptbs" ></view>
+		       <view class="ptbi text-blue" >
+					<text class="cuIcon-attentionfill text-blue"></text> {{item.see}} 
+					<text class="cuIcon-messagefill text-blue"></text> {{item.fav}} 
+		       </view>
+             </view>
+         </view>
+   </view>
+</view>
+
+<load wx:if="{{isload}}" ></load>

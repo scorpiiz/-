@@ -1,0 +1,58 @@
+<cu-custom bgColor="bg-t1" isBack="{{true}}">
+    <view slot="backText">返回</view>
+    <view slot="content">上传寻回凭证</view>
+</cu-custom>
+
+    <view class="news-item-container">
+
+<view class="padding flex text-left text-grey bg-white bt-b2 ">
+        <view class="text-xl text-black text-bold">
+            {{item.pname}}
+        </view>
+		<view class="text-xl text-red text-bold" wx-if="{{item.fee>0}}">
+				报酬：{{item.fee}}
+			</view>
+		<view class="text-xl text-red text-bold" wx-if="{{item.fee==0}}">
+				无偿
+		</view>
+</view>
+
+       <form bindsubmit="formSubmit">
+
+
+
+<view class="cu-bar bg-white margin-top">
+     <view class="action">
+       凭证图片上传
+     </view>
+     <view class="action">
+     </view>
+   </view>
+   <view class="cu-form-group">
+     <view class="grid col-4 grid-square flex-sub">
+       <view class="bg-img" wx:for="{{imgList}}" wx:key="{{index}}" bindtap="ViewImage" data-url="{{item.url}}">
+         <image src='{{item.url}}' mode='aspectFill'></image>
+         <view class="cu-tag bg-red" catchtap="DelImg" data-index="{{index}}" data-id="{{item.id}}" data-pic="{{item.pic}}">
+           <text class="cuIcon-close"></text>
+         </view>
+       </view>
+       <view class="solids" bindtap="ChooseImage" wx:if="{{imgList.length<1}}">
+         <text class="cuIcon-cameraadd"></text>
+       </view>
+     </view>
+</view>
+    <view class="cu-form-group">
+            <view class="title">描述：</view>
+            <textarea placeholder="请输入描述" name="cont"  ></textarea>
+    </view>
+
+
+			<view class="cu-form-group">
+			  <view class="btndiv">
+				<button class="cu-btn block bg-green shadow lg"  form-type="submit" loading="{{isSubmit}}">{{isSubmit?"提交中":"确定"}}</button>
+			   </view> 
+			</view>
+	    </form>
+    </view>
+
+<load wx:if="{{isload}}" ></load>

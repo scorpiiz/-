@@ -1,0 +1,56 @@
+<cu-custom bgColor="bg-t1" isBack="{{true}}">
+    <view slot="backText">返回</view>
+    <view slot="content">宠物知识详细</view>
+</cu-custom>
+
+<view class="bg-white padding" wx:if="{{item.pic}}">
+         <view class="image" >
+               <image src="{{item.pic}}" mode="widthFix"></image>
+          </view>
+</view>   
+
+<view class="padding flex text-left text-grey bg-white bt-b2 ">
+        <view class="text-xl text-black text-bold">
+            {{item.bt}}
+        </view>
+	<view class="text-black">
+            {{item.addtime}}
+        </view>
+</view>
+<view class="padding flex text-center text-grey bg-white shadow-warp">
+        <view class="flex flex-sub flex-direction solid-right" >
+            <view class="text-xxl text-orange">{{item.see}}</view>
+            <view class="margin-top-sm">
+                <text class="cuIcon-attentionfill"></text> 查看
+            </view>
+        </view>
+	<view class="flex flex-sub flex-direction solid-right" >
+            <view class="text-xxl text-orange">{{item.fav}}</view>
+            <view class="margin-top-sm">
+                <text class="cuIcon-messagefill"></text> 收藏
+            </view>
+        </view>
+</view>
+
+
+
+
+<view class="cu-bar bg-white solid-bottom margin-top">
+    <view class='action'>
+        <text class='cuIcon-titles text-blue '></text> 内容
+    </view>
+</view>
+ <view class="padding  bg-white" style="padding-bottom:100rpx;">
+        <view class="content bg-white padding-top">
+      <view class="wzdesc">
+          <rich-text nodes="{{item.bz}}"></rich-text>
+      </view>
+    </view>
+ </view>
+
+
+<view class="cu-bar foot input " style="bottom:0px" >
+     <button class="cu-btn bg-blue shadow-blur"  bindtap="gofav" data-n="fav_Add" >关注</button>
+</view>
+
+<load wx:if="{{isload}}" ></load>

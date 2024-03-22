@@ -1,0 +1,66 @@
+<cu-custom bgColor="bg-t1" isBack="{{true}}">
+    <view slot="backText">返回</view>
+    <view slot="content">发布宠物寻回</view>
+</cu-custom>
+
+    <view class="news-item-container">
+       <form bindsubmit="formSubmit">
+    <view class="cu-form-group">
+            <view class="title">主题：</view>
+            <input placeholder="请输入主题" name="pname"  ></input>
+    </view>
+<view class="cu-bar bg-white margin-top">
+     <view class="action">
+       图片上传
+     </view>
+     <view class="action">
+     </view>
+   </view>
+   <view class="cu-form-group">
+     <view class="grid col-4 grid-square flex-sub">
+       <view class="bg-img" wx:for="{{imgList}}" wx:key="{{index}}" bindtap="ViewImage" data-url="{{item.url}}">
+         <image src='{{item.url}}' mode='aspectFill'></image>
+         <view class="cu-tag bg-red" catchtap="DelImg" data-index="{{index}}" data-id="{{item.id}}" data-pic="{{item.pic}}">
+           <text class="cuIcon-close"></text>
+         </view>
+       </view>
+       <view class="solids" bindtap="ChooseImage" wx:if="{{imgList.length<1}}">
+         <text class="cuIcon-cameraadd"></text>
+       </view>
+     </view>
+</view>
+    <view class="cu-form-group">
+            <view class="title">费用：</view>
+            <input placeholder="请输入费用" name="fee"  ></input>
+    </view>
+    <view class="cu-form-group">
+            <view class="title">宠物年龄：</view>
+            <input placeholder="请输入宠物年龄" name="age"  ></input>
+    </view>
+    <view class="cu-form-group">
+            <view class="title">遗失地点：</view>
+            <input placeholder="请输入遗失地点" name="address"  ></input>
+    </view>
+    <view class="cu-form-group">
+            <view class="title">发布人：</view>
+            <input placeholder="请输入发布人" name="man"  ></input>
+    </view>
+    <view class="cu-form-group">
+            <view class="title">电话：</view>
+            <input placeholder="请输入电话" name="tel"  ></input>
+    </view>
+    <view class="cu-form-group">
+            <view class="title">介绍：</view>
+            <textarea placeholder="请输入介绍" name="cont"  ></textarea>
+    </view>
+
+
+			<view class="cu-form-group">
+			  <view class="btndiv">
+				<button class="cu-btn block bg-green shadow lg"  form-type="submit" loading="{{isSubmit}}">{{isSubmit?"提交中":"确定"}}</button>
+			   </view> 
+			</view>
+	    </form>
+    </view>
+
+<load wx:if="{{isload}}" ></load>
