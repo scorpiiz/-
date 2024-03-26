@@ -1,0 +1,84 @@
+{
+  "pages":[
+     "pages/index/index",
+	 "pages/index/reg",
+	 "pages/index/add",
+
+     "pages/adopt/index",
+     "pages/adopt/show",
+     "pages/adopt/add",
+     "pages/myadopt/index",
+     "pages/myapply/index",
+
+     "pages/petlost/index",
+     "pages/petlost/show",
+     "pages/mypetlost/index",
+     "pages/mypetfind/index",
+     "pages/petfind/add",
+
+     "pages/zixun/index",
+     "pages/zixun/show",
+
+     "pages/help/index",
+     "pages/help/show",
+     "pages/help/add",
+     "pages/myhelp/index",
+     "pages/mybaoming/index",
+     "pages/myrecord/index",
+
+     "pages/mypet/index",
+     "pages/mysms/index",
+     "pages/myfav/index",
+
+  
+     "pages/my/index",
+     "pages/my/userinfo",
+     "pages/my/userpass"
+  ],
+  "window":{
+    "backgroundTextStyle":"light",
+    "navigationBarBackgroundColor": "#39b54a",
+    "navigationBarTitleText": "宠物救助服务平台",
+    "navigationStyle": "custom",
+    "navigationBarTextStyle":"white"
+  },
+  "tabBar": {
+    "color": "#353535",
+    "selectedColor": "#3cc51f",
+    "borderStyle": "white",
+    "backgroundColor": "#ffffff",
+    "list": [{
+      "pagePath": "pages/index/index",
+      "iconPath": "images/bar/icon_home.png",
+      "selectedIconPath": "images/bar/icon_home_HL.png",
+      "text": "首页"
+    },{
+      "pagePath": "pages/adopt/index",
+      "iconPath": "images/bar/icon_order.png",
+      "selectedIconPath": "images/bar/icon_order_HL.png",
+      "text": "宠物领养"
+    },{
+      "pagePath": "pages/zixun/index",
+      "iconPath": "images/bar/icon_order.png",
+      "selectedIconPath": "images/bar/icon_order_HL.png",
+      "text": "宠物知识"
+    },{
+      "pagePath": "pages/help/index",
+      "iconPath": "images/bar/icon_order.png",
+      "selectedIconPath": "images/bar/icon_order_HL.png",
+      "text": "活动"
+    },{
+      "pagePath": "pages/my/index",
+      "iconPath": "images/bar/icon_my.png",
+      "selectedIconPath": "images/bar/icon_my_HL.png",
+      "text": "我的"
+    }]
+  },
+  "style": "v2",
+  "usingComponents": {
+    "cu-custom": "/ui/components/cu-custom",
+     "load": "/pages/login/load"
+  },
+  "sitemapLocation": "sitemap.json"
+
+}
