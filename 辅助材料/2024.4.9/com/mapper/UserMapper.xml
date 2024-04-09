@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.UserMapper">
+	<select id="findUserList"  resultType="User">
+		select * from user 
+	</select>
+	
+	<select id="query" parameterType="java.util.Map" resultType="User">
+
+
+        select  * from user
+		<include refid="where"></include>
+
+		order by ${sort} id desc
+		  <if test="page">
+			limit #{offset} ,#{pageSize}
+		</if>
+	</select>
+	
+	
+	<select id="getCount" parameterType="java.util.Map" resultType="Int">
+		select count(0) from user
+		<include refid="where"></include>
+	</select>
+
+	<sql id="where">
+		<where>
+		   1=1
+		  <if test="id != null and id != 0">
+		    and id = #{id}
+		</if>
+		  <if test="uname != null and uname != ''">
+		    and uname = #{uname}
+		</if>
+		  <if test="upass != null and upass != ''">
+		    and upass = #{upass}
+		</if>
+		  <if test="pic != null and pic != ''">
+		    and pic = #{pic}
+		</if>
+		  <if test="man != null and man != ''">
+		    and man = #{man}
+		</if>
+		  <if test="tel != null and tel != ''">
+		    and tel = #{tel}
+		</if>
+		  <if test="address != null and address != ''">
+		    and address = #{address}
+		</if>
+
+        <if test="condition != null and condition != ''">
+			 and  ${condition}
+		</if>
+		</where>
+	</sql>
+	
+	
+	<select id="queryUserById" parameterType="int" resultType="User">
+		select * from user where id=${value}
+	</select>
+ 
+
+
+	<insert id="insertUser" useGeneratedKeys="true" keyProperty="id" parameterType="User">
+		insert into user
+    (uname,upass,pic,man,tel,address,addtime)
+    values
+    (#{uname},#{upass},#{pic},#{man},#{tel},#{address},now());
+	</insert>
+
+
+
+	<update id="updateUser" parameterType="User" >
+		update user 
+		<set>
+		  <if test="uname != null and uname != ''">
+		    uname = #{uname},
+		</if>
+		  <if test="upass != null and upass != ''">
+		    upass = #{upass},
+		</if>
+		  <if test="pic != null and pic != ''">
+		    pic = #{pic},
+		</if>
+		  <if test="man != null and man != ''">
+		    man = #{man},
+		</if>
+		  <if test="tel != null and tel != ''">
+		    tel = #{tel},
+		</if>
+		  <if test="address != null and address != ''">
+		    address = #{address},
+		</if>
+
+		</set>
+		where
+		<if test="condition != null and condition != ''">
+			   ${condition}
+		</if>
+		<if test="condition == null or condition == ''">
+				id=#{id}
+		</if>	
+	</update>
+	
+ 
+	
+	<delete id="deleteUser" parameterType="int">
+	    delete from  user where id=${value}
+	</delete>
+
+    <select id="exist" resultType="java.lang.Boolean">
+		select case when COUNT(*) > 0 then 1 else 0 end
+		from user
+		<where>
+
+		</where>
+    </select>
+
+</mapper>
+
+ 

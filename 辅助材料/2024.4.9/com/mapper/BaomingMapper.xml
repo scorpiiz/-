@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.BaomingMapper">
+	<select id="findBaomingList"  resultType="Baoming">
+		select * from baoming 
+	</select>
+	
+	<select id="query" parameterType="java.util.Map" resultType="Baoming">
+
+
+        select  * from  (select a.*,b.pic as userpic from baoming a left join user b on a.uid=b.id) aa 
+		<include refid="where"></include>
+
+		order by ${sort} id desc
+		  <if test="page">
+			limit #{offset} ,#{pageSize}
+		</if>
+	</select>
+	
+	
+	<select id="getCount" parameterType="java.util.Map" resultType="Int">
+		select count(0) from baoming
+		<include refid="where"></include>
+	</select>
+
+	<sql id="where">
+		<where>
+		   1=1
+		  <if test="id != null and id != 0">
+		    and id = #{id}
+		</if>
+		  <if test="uid != null and uid != 0">
+		    and uid = #{uid}
+		</if>
+		  <if test="uname != null and uname != ''">
+		    and instr(uname,#{uname})>0
+		</if>
+		  <if test="cid != null and cid != 0">
+		    and cid = #{cid}
+		</if>
+		  <if test="cname != null and cname != ''">
+		    and instr(cname,#{cname})>0
+		</if>
+		  <if test="cont != null and cont != ''">
+		    and instr(cont,#{cont})>0
+		</if>
+		  <if test="zt != null and zt != ''">
+		    and instr(zt,#{zt})>0
+		</if>
+
+        <if test="condition != null and condition != ''">
+			 and  ${condition}
+		</if>
+		</where>
+	</sql>
+	
+	
+	<select id="queryBaomingById" parameterType="int" resultType="Baoming">
+		select * from  (select a.*,b.pic as userpic from baoming a left join user b on a.uid=b.id) aa  where id=${value}
+	</select>
+ 
+
+
+	<insert id="insertBaoming" useGeneratedKeys="true" keyProperty="id" parameterType="Baoming">
+		insert into baoming
+    (uid,uname,cid,cname,cont,zt,addtime)
+    values
+    (#{uid},#{uname},#{cid},#{cname},#{cont},'未审核',now());
+	</insert>
+
+
+
+	<update id="updateBaoming" parameterType="Baoming" >
+		update baoming 
+		<set>
+		  <if test="uid != null and uid != 0">
+		    uid = #{uid},
+		</if>
+		  <if test="uname != null and uname != ''">
+		    uname = #{uname},
+		</if>
+		  <if test="cid != null and cid != 0">
+		    cid = #{cid},
+		</if>
+		  <if test="cname != null and cname != ''">
+		    cname = #{cname},
+		</if>
+		  <if test="cont != null and cont != ''">
+		    cont = #{cont},
+		</if>
+		  <if test="zt != null and zt != ''">
+		    zt = #{zt},
+		</if>
+
+		</set>
+		where
+		<if test="condition != null and condition != ''">
+			   ${condition}
+		</if>
+		<if test="condition == null or condition == ''">
+				id=#{id}
+		</if>	
+	</update>
+	
+ 
+	
+	<delete id="deleteBaoming" parameterType="int">
+	    delete from  baoming where id=${value}
+	</delete>
+
+    <select id="exist" resultType="java.lang.Boolean">
+		select case when COUNT(*) > 0 then 1 else 0 end
+		from baoming
+		<where>
+
+		</where>
+    </select>
+
+</mapper>
+
+ 

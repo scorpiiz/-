@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.PetfindMapper">
+	<select id="findPetfindList"  resultType="Petfind">
+		select * from petfind 
+	</select>
+	
+	<select id="query" parameterType="java.util.Map" resultType="Petfind">
+
+
+        select  * from  (select a.*,b.pic as userpic from petfind a left join user b on a.uid=b.id) aa 
+		<include refid="where"></include>
+
+		order by ${sort} id desc
+		  <if test="page">
+			limit #{offset} ,#{pageSize}
+		</if>
+	</select>
+	
+	
+	<select id="getCount" parameterType="java.util.Map" resultType="Int">
+		select count(0) from petfind
+		<include refid="where"></include>
+	</select>
+
+	<sql id="where">
+		<where>
+		   1=1
+		  <if test="id != null and id != 0">
+		    and id = #{id}
+		</if>
+		  <if test="uid != null and uid != 0">
+		    and uid = #{uid}
+		</if>
+		  <if test="uname != null and uname != ''">
+		    and instr(uname,#{uname})>0
+		</if>
+		  <if test="cid != null and cid != 0">
+		    and cid = #{cid}
+		</if>
+		  <if test="cname != null and cname != ''">
+		    and instr(cname,#{cname})>0
+		</if>
+		  <if test="pic != null and pic != ''">
+		    and instr(pic,#{pic})>0
+		</if>
+		  <if test="cont != null and cont != ''">
+		    and instr(cont,#{cont})>0
+		</if>
+		  <if test="fee != null and fee != ''">
+		    and fee = #{fee}
+		</if>
+		  <if test="zt != null and zt != ''">
+		    and instr(zt,#{zt})>0
+		</if>
+
+        <if test="condition != null and condition != ''">
+			 and  ${condition}
+		</if>
+		</where>
+	</sql>
+	
+	
+	<select id="queryPetfindById" parameterType="int" resultType="Petfind">
+		select * from  (select a.*,b.pic as userpic from petfind a left join user b on a.uid=b.id) aa  where id=${value}
+	</select>
+ 
+
+
+	<insert id="insertPetfind" useGeneratedKeys="true" keyProperty="id" parameterType="Petfind">
+		insert into petfind
+    (uid,uname,cid,cname,pic,cont,fee,zt,addtime)
+    values
+    (#{uid},#{uname},#{cid},#{cname},#{pic},#{cont},#{fee},'未确认',now());
+	</insert>
+
+
+
+	<update id="updatePetfind" parameterType="Petfind" >
+		update petfind 
+		<set>
+		  <if test="uid != null and uid != 0">
+		    uid = #{uid},
+		</if>
+		  <if test="uname != null and uname != ''">
+		    uname = #{uname},
+		</if>
+		  <if test="cid != null and cid != 0">
+		    cid = #{cid},
+		</if>
+		  <if test="cname != null and cname != ''">
+		    cname = #{cname},
+		</if>
+		  <if test="pic != null and pic != ''">
+		    pic = #{pic},
+		</if>
+		  <if test="cont != null and cont != ''">
+		    cont = #{cont},
+		</if>
+		  <if test="fee != null and fee != ''">
+		    fee = #{fee},
+		</if>
+		  <if test="zt != null and zt != ''">
+		    zt = #{zt},
+		</if>
+
+		</set>
+		where
+		<if test="condition != null and condition != ''">
+			   ${condition}
+		</if>
+		<if test="condition == null or condition == ''">
+				id=#{id}
+		</if>	
+	</update>
+	
+ 
+	
+	<delete id="deletePetfind" parameterType="int">
+	    delete from  petfind where id=${value}
+	</delete>
+
+    <select id="exist" resultType="java.lang.Boolean">
+		select case when COUNT(*) > 0 then 1 else 0 end
+		from petfind
+		<where>
+
+		</where>
+    </select>
+
+</mapper>
+
+ 

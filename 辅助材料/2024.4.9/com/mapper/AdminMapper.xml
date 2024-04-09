@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.AdminMapper">
+	<select id="findAdminList"  resultType="Admin">
+		select * from admin 
+	</select>
+	
+	<select id="query" parameterType="java.util.Map" resultType="Admin">
+
+
+        select  * from admin
+		<include refid="where"></include>
+
+		order by ${sort} aid desc
+		  <if test="page">
+			limit #{offset} ,#{pageSize}
+		</if>
+	</select>
+	
+	
+	<select id="getCount" parameterType="java.util.Map" resultType="Int">
+		select count(0) from admin
+		<include refid="where"></include>
+	</select>
+
+	<sql id="where">
+		<where>
+		   1=1
+		  <if test="aid != null and aid != 0">
+		    and aid = #{aid}
+		</if>
+		  <if test="lname != null and lname != ''">
+		    and lname = #{lname}
+		</if>
+		  <if test="pwd != null and pwd != ''">
+		    and pwd = #{pwd}
+		</if>
+		  <if test="flag != null and flag != 0">
+		    and flag = #{flag}
+		</if>
+
+        <if test="condition != null and condition != ''">
+			 and  ${condition}
+		</if>
+		</where>
+	</sql>
+	
+	
+	<select id="queryAdminById" parameterType="int" resultType="Admin">
+		select * from admin where aid=${value}
+	</select>
+ 
+
+
+	<insert id="insertAdmin" useGeneratedKeys="true" keyProperty="id" parameterType="Admin">
+		insert into admin
+    (lname,pwd,flag)
+    values
+    (#{lname},#{pwd},0);
+	</insert>
+
+
+
+	<update id="updateAdmin" parameterType="Admin" >
+		update admin 
+		<set>
+		  <if test="lname != null and lname != ''">
+		    lname = #{lname},
+		</if>
+		  <if test="pwd != null and pwd != ''">
+		    pwd = #{pwd},
+		</if>
+		  <if test="flag != null and flag != 0">
+		    flag = #{flag},
+		</if>
+
+		</set>
+		where
+		<if test="condition != null and condition != ''">
+			   ${condition}
+		</if>
+		<if test="condition == null or condition == ''">
+				aid=#{aid}
+		</if>	
+	</update>
+	
+ 
+	
+	<delete id="deleteAdmin" parameterType="int">
+	    delete from  admin where aid=${value}
+	</delete>
+
+    <select id="exist" resultType="java.lang.Boolean">
+		select case when COUNT(*) > 0 then 1 else 0 end
+		from admin
+		<where>
+
+		</where>
+    </select>
+
+</mapper>
+
+ 

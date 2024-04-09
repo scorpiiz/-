@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.ZixunMapper">
+	<select id="findZixunList"  resultType="Zixun">
+		select * from zixun 
+	</select>
+	
+	<select id="query" parameterType="java.util.Map" resultType="Zixun">
+
+
+        select  * from zixun
+		<include refid="where"></include>
+
+		order by ${sort} id desc
+		  <if test="page">
+			limit #{offset} ,#{pageSize}
+		</if>
+	</select>
+	
+	
+	<select id="getCount" parameterType="java.util.Map" resultType="Int">
+		select count(0) from zixun
+		<include refid="where"></include>
+	</select>
+
+	<sql id="where">
+		<where>
+		   1=1
+		  <if test="id != null and id != 0">
+		    and id = #{id}
+		</if>
+		  <if test="bt != null and bt != ''">
+		    and instr(bt,#{bt})>0
+		</if>
+		  <if test="see != null and see != 0">
+		    and see = #{see}
+		</if>
+		  <if test="fav != null and fav != 0">
+		    and fav = #{fav}
+		</if>
+		  <if test="pic != null and pic != ''">
+		    and instr(pic,#{pic})>0
+		</if>
+		  <if test="bz != null and bz != ''">
+		    and instr(bz,#{bz})>0
+		</if>
+
+        <if test="condition != null and condition != ''">
+			 and  ${condition}
+		</if>
+		</where>
+	</sql>
+	
+	
+	<select id="queryZixunById" parameterType="int" resultType="Zixun">
+		select * from zixun where id=${value}
+	</select>
+ 
+
+
+	<insert id="insertZixun" useGeneratedKeys="true" keyProperty="id" parameterType="Zixun">
+		insert into zixun
+    (bt,see,fav,pic,bz,addtime)
+    values
+    (#{bt},0,0,#{pic},#{bz},now());
+	</insert>
+
+
+
+	<update id="updateZixun" parameterType="Zixun" >
+		update zixun 
+		<set>
+		  <if test="bt != null and bt != ''">
+		    bt = #{bt},
+		</if>
+		  <if test="see != null and see == 1">
+		    see = see+1,
+		</if>
+		  <if test="fav != null and fav == 1">
+		    fav = fav+1,
+		</if>
+		  <if test="pic != null and pic != ''">
+		    pic = #{pic},
+		</if>
+		  <if test="bz != null and bz != ''">
+		    bz = #{bz},
+		</if>
+
+		</set>
+		where
+		<if test="condition != null and condition != ''">
+			   ${condition}
+		</if>
+		<if test="condition == null or condition == ''">
+				id=#{id}
+		</if>	
+	</update>
+	
+ 
+	
+	<delete id="deleteZixun" parameterType="int">
+	    delete from  zixun where id=${value}
+	</delete>
+
+    <select id="exist" resultType="java.lang.Boolean">
+		select case when COUNT(*) > 0 then 1 else 0 end
+		from zixun
+		<where>
+
+		</where>
+    </select>
+
+</mapper>
+
+ 

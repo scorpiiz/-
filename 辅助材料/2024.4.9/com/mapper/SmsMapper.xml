@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.SmsMapper">
+	<select id="findSmsList"  resultType="Sms">
+		select * from sms 
+	</select>
+	
+	<select id="query" parameterType="java.util.Map" resultType="Sms">
+
+
+        select  * from  (select a.*,b.pic as userpic from sms a left join user b on a.uid=b.id) aa 
+		<include refid="where"></include>
+
+		order by ${sort} id desc
+		  <if test="page">
+			limit #{offset} ,#{pageSize}
+		</if>
+	</select>
+	
+	
+	<select id="getCount" parameterType="java.util.Map" resultType="Int">
+		select count(0) from sms
+		<include refid="where"></include>
+	</select>
+
+	<sql id="where">
+		<where>
+		   1=1
+		  <if test="id != null and id != 0">
+		    and id = #{id}
+		</if>
+		  <if test="uid != null and uid != 0">
+		    and uid = #{uid}
+		</if>
+		  <if test="uname != null and uname != ''">
+		    and instr(uname,#{uname})>0
+		</if>
+		  <if test="sid != null and sid != 0">
+		    and sid = #{sid}
+		</if>
+		  <if test="sname != null and sname != ''">
+		    and instr(sname,#{sname})>0
+		</if>
+		  <if test="cont != null and cont != ''">
+		    and instr(cont,#{cont})>0
+		</if>
+
+        <if test="condition != null and condition != ''">
+			 and  ${condition}
+		</if>
+		</where>
+	</sql>
+	
+	
+	<select id="querySmsById" parameterType="int" resultType="Sms">
+		select * from  (select a.*,b.pic as userpic from sms a left join user b on a.uid=b.id) aa  where id=${value}
+	</select>
+ 
+
+
+	<insert id="insertSms" useGeneratedKeys="true" keyProperty="id" parameterType="Sms">
+		insert into sms
+    (uid,uname,sid,sname,cont,addtime)
+    values
+    (#{uid},#{uname},#{sid},#{sname},#{cont},now());
+	</insert>
+
+
+
+	<update id="updateSms" parameterType="Sms" >
+		update sms 
+		<set>
+		  <if test="uid != null and uid != 0">
+		    uid = #{uid},
+		</if>
+		  <if test="uname != null and uname != ''">
+		    uname = #{uname},
+		</if>
+		  <if test="sid != null and sid != 0">
+		    sid = #{sid},
+		</if>
+		  <if test="sname != null and sname != ''">
+		    sname = #{sname},
+		</if>
+		  <if test="cont != null and cont != ''">
+		    cont = #{cont},
+		</if>
+
+		</set>
+		where
+		<if test="condition != null and condition != ''">
+			   ${condition}
+		</if>
+		<if test="condition == null or condition == ''">
+				id=#{id}
+		</if>	
+	</update>
+	
+ 
+	
+	<delete id="deleteSms" parameterType="int">
+	    delete from  sms where id=${value}
+	</delete>
+
+    <select id="exist" resultType="java.lang.Boolean">
+		select case when COUNT(*) > 0 then 1 else 0 end
+		from sms
+		<where>
+
+		</where>
+    </select>
+
+</mapper>
+
+ 
